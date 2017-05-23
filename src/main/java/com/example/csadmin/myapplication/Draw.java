@@ -24,6 +24,7 @@ public class Draw extends View implements View.OnTouchListener {
     boolean moveRight;
     boolean over;
     boolean started;
+    boolean paused;
     public Draw(Context c){
         super(c);
     }
@@ -36,6 +37,7 @@ public class Draw extends View implements View.OnTouchListener {
         moveRight = false;
         over = false;
         started = false;
+        paused = false;
         game = new Game(size, sp);
 
     }
@@ -44,26 +46,27 @@ public class Draw extends View implements View.OnTouchListener {
     public void onDraw(Canvas canvas) {
         if(!game.move(canvas, p, moveRight, moveLeft) || over){
             over = true;
-            p.setColor(Color.RED);
+            p.setColor(Color.parseColor("#FF1A44"));
             canvas.drawRect((int)(size/5), (int)(3*size/7), (int)(4*size/5), (int)(4*size/7), p);
             p.setColor(Color.WHITE);
             p.setTextSize((float)size/12);
-            canvas.drawText("RESTART?",(int)(25*size/80), (int)(15*size/28), p);
+            canvas.drawText("RESTART?",(int)(25*size/80), (int)(3*size/7+5*size/84+size/24), p);
 
             p.setColor(Color.WHITE);
-            p.setStrokeWidth(5);
+            p.setStrokeWidth(1);
             p.setStyle(Paint.Style.STROKE);
             canvas.drawRect((int)(size/5), (int)(3*size/7), (int)(4*size/5), (int)(4*size/7), p);
             p.setStyle(Paint.Style.FILL);
 
         }
-        else{
+        else if (!paused){
             if (started) countdown--;
             else{
                 p.setColor(Color.WHITE);
                 p.setTextSize((float)size/12);
                 canvas.drawText("TAP SCREEN TO START",(int)(5*size/80), (int)(15*size/28), p);
             }
+
             if (countdown == 0){ //create a new enemy
                 game.newEnemy();
                 countdown = (int)(Math.random()*50+75);
@@ -73,10 +76,10 @@ public class Draw extends View implements View.OnTouchListener {
 
     }
     public void moveRight(boolean r){
-        moveRight = r;
+        if (!paused)moveRight = r;
     }
     public void moveLeft(boolean l){
-        moveLeft = l;
+        if (!paused)moveLeft = l;
     }
     private void restart(){
         countdown = 50;
@@ -86,20 +89,30 @@ public class Draw extends View implements View.OnTouchListener {
         game.restart();
         invalidate();
     }
+    public void pause(){
+        moveRight = false;
+        moveLeft = false;
+        paused = true;
+    }
+    public void unpause(){
+        paused = false;
+    }
     public void start(){
-        started = true;
+        if (!paused) started = true;
     }
 
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        started = true;
-        float x = event.getX();
-        float y = event.getY();
-        if (over && x >= size/5 && x <= 4*size/5 &&
-                y >= 3*size/7 && y <= 4*size/7) {
-            restart();
-            return true;
+        if (!paused){
+            started = true;
+            float x = event.getX();
+            float y = event.getY();
+            if (over && x >= size/5 && x <= 4*size/5 &&
+                    y >= 3*size/7 && y <= 4*size/7) {
+                restart();
+                return true;
+            }
         }
         return false;
     }

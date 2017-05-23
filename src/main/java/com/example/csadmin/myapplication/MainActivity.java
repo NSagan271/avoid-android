@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout screen;
     RelativeLayout game;
     RelativeLayout.LayoutParams params;
+    ImageButton unpause;
+    ImageButton pause;
+    RelativeLayout paused;
     Draw d;
     double s;
     DisplayMetrics displayMetrics;
@@ -83,6 +87,30 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        paused = (RelativeLayout) findViewById(R.id.paused);
+
+        unpause = (ImageButton) findViewById(R.id.unpause);
+        unpause.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                paused.setVisibility(View.INVISIBLE);
+                d.unpause();
+                d.start();
+                return false;
+            }
+        });
+
+        pause = (ImageButton) findViewById(R.id.pause);
+        pause.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                paused.setVisibility(View.VISIBLE);
+                d.pause();
+                return false;
+            }
+        });
+
 
         params = new RelativeLayout.LayoutParams((int)s, (int)s);
         game.addView(d, params);

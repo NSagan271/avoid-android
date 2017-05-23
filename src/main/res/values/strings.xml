@@ -2,4 +2,6 @@
     <string name="app_name">Avoid!</string>
     <string name="left">⇐</string>
     <string name="right">⇒</string>
+    <string name="pause">pause</string>
+    <string name="unpause">unpause</string>
 </resources>
