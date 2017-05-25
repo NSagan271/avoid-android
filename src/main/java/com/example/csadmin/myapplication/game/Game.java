@@ -71,7 +71,7 @@ public class Game {
         drawScore(canvas, p);
         return false;
     }
-    private void drawScore(Canvas canvas, Paint p){
+    public void drawScore(Canvas canvas, Paint p){
         p.setColor(Color.WHITE);
         p.setTextSize((float)fontSize);
         canvas.drawText("SCORE: "+ (int)Math.ceil(this.score) + " ~ HIGH SCORE: " +(int)Math.ceil(this.highScore),
@@ -104,7 +104,14 @@ public class Game {
             saveHighScore((float)score);
             highScore = getHighScore();
         }
-
+    }
+    public void forceEnd(){
+        enemies = null;
+        enemies = new ArrayList<>();
+        dead = false;
+        player = null;
+        score = 0;
+        player = new Player(screenSize);
     }
     private void saveHighScore(float s){
         prefs.edit().putFloat("com.example.app.score",s).apply();

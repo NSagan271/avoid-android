@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -44,7 +45,7 @@ public class Draw extends View implements View.OnTouchListener {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if(!game.move(canvas, p, moveRight, moveLeft) || over){
+        if(started && !game.move(canvas, p, moveRight, moveLeft) || over){
             over = true;
             p.setColor(Color.parseColor("#FF1A44"));
             canvas.drawRect((int)(size/5), (int)(3*size/7), (int)(4*size/5), (int)(4*size/7), p);
@@ -62,6 +63,9 @@ public class Draw extends View implements View.OnTouchListener {
         else if (!paused){
             if (started) countdown--;
             else{
+                p.setColor(Color.BLACK);
+                canvas.drawRect(0, 0, (int)size, (int)size, p);
+                game.drawScore(canvas, p);
                 p.setColor(Color.WHITE);
                 p.setTextSize((float)size/12);
                 canvas.drawText("TAP SCREEN TO START",(int)(5*size/80), (int)(15*size/28), p);
@@ -89,18 +93,35 @@ public class Draw extends View implements View.OnTouchListener {
         game.restart();
         invalidate();
     }
-    public void pause(){
+    public boolean pause(){
+        if (!started || over){
+            end();
+            return false;
+        }
         moveRight = false;
         moveLeft = false;
         paused = true;
+        return true;
     }
     public void unpause(){
         paused = false;
+        started = true;
+        invalidate();
     }
     public void start(){
         if (!paused) started = true;
     }
-
+    private void end(){
+        game.forceEnd();
+        Log.i("DEBUG","END");
+        started = false;
+        moveLeft = false;
+        moveRight = false;
+        over = false;
+        countdown = 10;
+        paused = false;
+        invalidate();
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

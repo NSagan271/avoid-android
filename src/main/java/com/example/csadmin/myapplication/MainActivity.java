@@ -26,10 +26,13 @@ public class MainActivity extends AppCompatActivity {
     double s;
     DisplayMetrics displayMetrics;
     SharedPreferences sp;
+    boolean exited;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        exited = false;
 
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -47,10 +50,37 @@ public class MainActivity extends AppCompatActivity {
                 "com.example.app", Context.MODE_PRIVATE);
         d = new Draw(getApplicationContext(),s, sp);
 
+        paused = (RelativeLayout) findViewById(R.id.paused);
+
+        pause = (ImageButton) findViewById(R.id.pause);
+        pause.setEnabled(false);
+        pause.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                paused.setVisibility(View.VISIBLE);
+                pause.setEnabled(false);
+                d.pause();
+                return false;
+            }
+        });
+
+        unpause = (ImageButton) findViewById(R.id.unpause);
+        unpause.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                paused.setVisibility(View.INVISIBLE);
+                pause.setEnabled(true);
+                d.unpause();
+                d.start();
+                return false;
+            }
+        });
+
         left.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 d.start();
+                pause.setEnabled(true);
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         d.moveLeft(true);
@@ -67,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 d.start();
+                pause.setEnabled(true);
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         d.moveRight(true);
@@ -83,38 +114,34 @@ public class MainActivity extends AppCompatActivity {
         screen.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                pause.setEnabled(true);
                 d.start();
                 return false;
             }
         });
 
-        paused = (RelativeLayout) findViewById(R.id.paused);
 
-        unpause = (ImageButton) findViewById(R.id.unpause);
-        unpause.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                paused.setVisibility(View.INVISIBLE);
-                d.unpause();
-                d.start();
-                return false;
-            }
-        });
-
-        pause = (ImageButton) findViewById(R.id.pause);
-        pause.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                paused.setVisibility(View.VISIBLE);
-                d.pause();
-                return false;
-            }
-        });
 
 
         params = new RelativeLayout.LayoutParams((int)s, (int)s);
         game.addView(d, params);
 
 
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        exited = d.pause();
+        if (!exited) pause.setEnabled(false);
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        if (exited){
+            paused.setVisibility(View.VISIBLE);
+            pause.setEnabled(false);
+        }
+        exited = false;
     }
 }
