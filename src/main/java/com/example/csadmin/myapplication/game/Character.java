@@ -57,6 +57,9 @@ class Character {
     double size(){
         return size;
     }
+    double speed(){
+        return speed;
+    }
     void setSpeed(double s){
         speed = s;
         maxSpeed = speed * 1.1;

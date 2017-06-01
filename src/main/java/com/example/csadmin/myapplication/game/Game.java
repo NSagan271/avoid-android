@@ -31,6 +31,20 @@ public class Game {
         prefs = sp;
         highScore = getHighScore();
     }
+    public Game(double s, double playerX, double[] enemyX,
+                double[] enemyY, double[] enemyV, double score, SharedPreferences sp){
+        dead = false;
+        screenSize = s;
+        fontSize = (s*3/50);
+        player = new Player(s, playerX);
+        enemies = new ArrayList<>();
+        for (int i = 0; i < enemyX.length; i++){
+            enemies.add (new Enemy(screenSize, enemyX[i], enemyY[i], enemyV[i]));
+        }
+        this.score = score;
+        prefs = sp;
+        highScore = getHighScore();
+    }
     private void draw(Canvas canvas, Paint p){
         p.setColor(Color.BLACK);
         canvas.drawRect(0, 0, (int)screenSize, (int)screenSize, p);
@@ -100,6 +114,7 @@ public class Game {
         enemies = null;
         player.die(canvas, p);
         player = null;
+        System.gc();
         if (score > highScore){
             saveHighScore((float)score);
             highScore = getHighScore();
@@ -107,10 +122,13 @@ public class Game {
     }
     public void forceEnd(){
         enemies = null;
-        enemies = new ArrayList<>();
+
         dead = false;
         player = null;
+
+        System.gc();
         score = 0;
+        enemies = new ArrayList<>();
         player = new Player(screenSize);
     }
     private void saveHighScore(float s){
@@ -118,5 +136,33 @@ public class Game {
     }
     private double getHighScore(){
         return prefs.getFloat("com.example.app.score",0);
+    }
+
+    public double playerX(){
+        return player.x();
+    }
+    public double[] enemyX(){
+        double[] result = new double[enemies.size()];
+        for (int i = 0; i < result.length; i++){
+            result[i] = enemies.get(i).x();
+        }
+        return result;
+    }
+    public double[] enemyY(){
+        double[] result = new double[enemies.size()];
+        for (int i = 0; i < result.length; i++){
+            result[i] = enemies.get(i).y();
+        }
+        return result;
+    }
+    public double[] enemyV(){
+        double[] result = new double[enemies.size()];
+        for (int i = 0; i < result.length; i++){
+            result[i] = enemies.get(i).speed();
+        }
+        return result;
+    }
+    public double score(){
+        return score;
     }
 }

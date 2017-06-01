@@ -42,6 +42,21 @@ public class Draw extends View implements View.OnTouchListener {
         game = new Game(size, sp);
 
     }
+    public Draw(Context context, double s, double playerX, double[] enemyX,
+                double[] enemyY, double[]enemyV, double score, boolean paused, SharedPreferences sp){
+        super(context);
+        size = s;
+        p = new Paint();
+        countdown = 100;
+        moveLeft = false;
+        moveRight = false;
+        over = false;
+        started = true;
+        this.paused = paused;
+        game = new Game(size, playerX, enemyX, enemyY, enemyV, score, sp);
+        if (paused) pause();
+
+    }
 
     @Override
     public void onDraw(Canvas canvas) {
@@ -103,7 +118,7 @@ public class Draw extends View implements View.OnTouchListener {
         paused = true;
         return true;
     }
-    public void unpause(){
+    public void unPause(){
         paused = false;
         started = true;
         invalidate();
@@ -141,5 +156,25 @@ public class Draw extends View implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         return false;
+    }
+
+    public double playerX(){
+        return game.playerX();
+    }
+    public double[] enemyX(){
+        return game.enemyX();
+    }
+    public double[] enemyY(){
+        return game.enemyY();
+    }
+    public double[] enemyV(){
+        return game.enemyV();
+    }
+    public double score(){
+        return game.score();
+    }
+
+    public boolean isOver(){
+        return (over || !started);
     }
 }

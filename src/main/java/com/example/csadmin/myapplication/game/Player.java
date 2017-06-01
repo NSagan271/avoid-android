@@ -13,6 +13,9 @@ class Player extends Character {
     Player(double s) {
         super(s, 0, 19*s/20, s/20);
     }
+    Player(double s, double x){
+        super(s, x, 19*s/20, s/20);
+    }
     @Override
     void draw(Canvas canvas, Paint p){
         super.draw(canvas, p, Color.BLUE);
