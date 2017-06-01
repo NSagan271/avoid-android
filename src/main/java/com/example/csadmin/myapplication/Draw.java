@@ -84,6 +84,11 @@ public class Draw extends View implements View.OnTouchListener {
                 p.setColor(Color.WHITE);
                 p.setTextSize((float)size/12);
                 canvas.drawText("TAP SCREEN TO START",(int)(5*size/80), (int)(15*size/28), p);
+                p.setTextSize((float)size/16);
+                p.setColor(Color.parseColor("#AAFFAA"));
+                canvas.drawText("Use ARROW BUTTONS to",(int)(9*size/80), (int)(15*size/28+size/12), p);
+                p.setColor(Color.parseColor("#FFAAAA"));
+                canvas.drawText("AVOID RED squares!!",(int)(15*size/80), (int)(15*size/28+size/6), p);
             }
 
             if (countdown == 0){ //create a new enemy
